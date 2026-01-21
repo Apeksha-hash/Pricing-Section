@@ -1,5 +1,6 @@
 import React from "react";
-import { ShieldAlert, Lock, Activity } from "lucide-react";
+// Removed ShieldAlert and Activity since they aren't used below
+import { Lock } from "lucide-react";
 
 const SecurityPortal: React.FC = () => {
   return (
@@ -17,7 +18,7 @@ const SecurityPortal: React.FC = () => {
         </div>
       </div>
 
-      {/* The Login/Scan Area:centered */}
+      {/* The Login/Scan Area: centered */}
       <div className="col-span-6 flex items-center justify-center p-8 relative">
         <div className="w-full max-w-md bg-slate-950/40 border border-emerald-500/20 p-10 rounded-3xl backdrop-blur-2xl shadow-[0_0_50px_rgba(16,185,129,0.1)] text-center">
           <div className="inline-flex p-4 rounded-2xl bg-emerald-500/10 mb-6">
@@ -29,7 +30,7 @@ const SecurityPortal: React.FC = () => {
           <input
             type="text"
             placeholder="SECURE_ACCESS_ID"
-            className="w-full bg-black/40 border border-slate-800 p-4 rounded-xl mb-4 focus:border-emerald-500 outline-none"
+            className="w-full bg-black/40 border border-slate-800 p-4 rounded-xl mb-4 focus:border-emerald-500 outline-none text-emerald-500"
           />
           <button className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl transition-all">
             UNLOCK PRICING
