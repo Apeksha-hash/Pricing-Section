@@ -26,6 +26,7 @@ const App: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showAccessBox, setShowAccessBox] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [showPricing, setShowPricing] = useState(false);
 
   const [randomAlerts] = useState(() =>
     Array.from({ length: 15 }).map((_, i) => ({
@@ -58,14 +59,18 @@ const App: React.FC = () => {
     e.preventDefault();
     setShowAccessBox(true);
     setStage("dashboard");
-    setTimeout(() => setShowAccessBox(false), 1200);
+    // Timing: Show Access Box -> Hide it after 1.5s -> Then show Pricing Cards
+    setTimeout(() => {
+      setShowAccessBox(false);
+      setTimeout(() => setShowPricing(true), 400);
+    }, 1500);
   };
 
   return (
     <div
       className={`min-h-screen font-mono flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-500 ${isDarkMode ? "bg-[#050505] text-white" : "bg-slate-50 text-slate-900"}`}
     >
-      {/* THEME TOGGLE BUTTON */}
+      {/* THEME TOGGLE */}
       <button
         onClick={() => setIsDarkMode(!isDarkMode)}
         className={`fixed top-6 right-6 z-[110] p-3 rounded-full border-2 transition-all ${isDarkMode ? "border-blue-600 bg-blue-600/10 text-blue-400 hover:bg-blue-600 hover:text-white" : "border-slate-300 bg-white text-slate-600 hover:border-blue-600 hover:text-blue-600"}`}
@@ -101,7 +106,7 @@ const App: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* NOTIFICATION BOX */}
+      {/* ACCESS GRANTED POPUP */}
       <AnimatePresence>
         {showAccessBox && (
           <motion.div
@@ -136,9 +141,7 @@ const App: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.05 }}
-              className={`border-2 border-blue-600 rounded-2xl p-8 shadow-[0_0_50px_rgba(37,99,235,0.3)] ${
-                isDarkMode ? "bg-black" : "bg-[#0a1120]"
-              }`}
+              className={`border-2 border-blue-600 rounded-2xl p-8 shadow-[0_0_50px_rgba(37,99,235,0.3)] ${isDarkMode ? "bg-black" : "bg-[#0a1120]"}`}
             >
               <div className="text-white">
                 <PricingLoader progress={progress} />
@@ -152,15 +155,42 @@ const App: React.FC = () => {
             </motion.div>
           )}
 
-          {/* LOGIN */}
+          {/* LOGIN WINDOW */}
           {stage === "login" && (
             <motion.div
               key="login"
               initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`border-t-4 border-t-blue-600 border-x-2 border-x-blue-600 border-b-2 border-b-blue-600 rounded-2xl p-10 shadow-2xl mx-auto max-w-[400px] ${isDarkMode ? "bg-[#0a0a0a]" : "bg-white"}`}
+              animate={{
+                opacity: 1,
+                y: [0, -12, 0], // Jumping/Floating animation
+              }}
+              transition={{
+                opacity: { duration: 0.4 },
+                y: { repeat: Infinity, duration: 2.5, ease: "easeInOut" },
+              }}
+              className={`border-t-4 border-t-blue-600 border-x-2 border-x-blue-600 border-b-2 border-b-blue-600 rounded-3xl p-10 shadow-2xl mx-auto max-w-[400px] relative mt-12 ${isDarkMode ? "bg-[#0a0a0a]" : "bg-white"}`}
             >
-              <div className="text-center mb-8">
+              {/* COMPANY LOGO AREA */}
+              <div className="absolute -top-12 left-1/2 -translate-x-1/2">
+                <motion.div
+                  animate={{ rotateY: [0, 360] }}
+                  transition={{ repeat: Infinity, duration: 6, ease: "linear" }}
+                  className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl border-4 border-blue-600 overflow-hidden"
+                >
+                  <img
+                    src="cyber.jpeg"
+                    alt="Cyber Logo"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback if image doesn't load
+                      e.currentTarget.src =
+                        "https://via.placeholder.com/150?text=CYBER";
+                    }}
+                  />
+                </motion.div>
+              </div>
+
+              <div className="text-center mb-8 mt-10">
                 <div className="bg-red-600/10 w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-600/20">
                   <ShieldAlert className="text-red-600" size={24} />
                 </div>
@@ -170,7 +200,7 @@ const App: React.FC = () => {
                   Sign In Required
                 </h2>
                 <p className="text-blue-500/60 text-[10px] uppercase tracking-widest mt-2 font-bold italic">
-                  Secure Access
+                  Secure Access Portal
                 </p>
               </div>
 
@@ -198,7 +228,7 @@ const App: React.FC = () => {
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-blue-600 text-white py-4 rounded-lg font-black text-xs uppercase tracking-widest transition-all border border-blue-600 shadow-lg shadow-blue-600/10"
+                  className="w-full bg-blue-600 hover:bg-slate-900 text-white py-4 rounded-lg font-black text-xs uppercase tracking-widest transition-all border border-blue-600 shadow-lg shadow-blue-600/10"
                 >
                   Sign In
                 </button>
@@ -218,7 +248,7 @@ const App: React.FC = () => {
                 <h2
                   className={`text-5xl font-black uppercase tracking-tighter ${isDarkMode ? "text-white" : "text-slate-900"}`}
                 >
-                  Sign In
+                  System Access
                 </h2>
                 <p className="text-blue-500 font-bold mt-2 uppercase text-xs tracking-[0.4em]">
                   Secure Portal:{" "}
@@ -226,35 +256,42 @@ const App: React.FC = () => {
                 </p>
               </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <PricingCard
-                  isDark={isDarkMode}
-                  delay={0.2}
-                  tier="Basic Defense"
-                  price="0.00"
-                  features={["10k API Requests", "Asset Takedown", "Reports"]}
-                />
-                <PricingCard
-                  isDark={isDarkMode}
-                  delay={0.3}
-                  tier="Personal Shield"
-                  price="499.00"
-                  featured
-                  features={[
-                    "Hygiene Report",
-                    "Phishing Detection",
-                    "24/7 Alerts",
-                  ]}
-                />
-                <PricingCard
-                  isDark={isDarkMode}
-                  delay={0.4}
-                  tier="Business Protect"
-                  price="2499.00"
-                  color="red"
-                  features={["Breach Alert", "Employee Training", "User Mgmt"]}
-                />
-              </div>
+              {/* PRICING CARDS - Gated by showPricing state */}
+              {showPricing && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <PricingCard
+                    isDark={isDarkMode}
+                    delay={0.1}
+                    tier="Basic Defense"
+                    price="0.00"
+                    features={["10k API Requests", "Asset Takedown", "Reports"]}
+                  />
+                  <PricingCard
+                    isDark={isDarkMode}
+                    delay={0.2}
+                    tier="Personal Shield"
+                    price="499.00"
+                    featured
+                    features={[
+                      "Hygiene Report",
+                      "Phishing Detection",
+                      "24/7 Alerts",
+                    ]}
+                  />
+                  <PricingCard
+                    isDark={isDarkMode}
+                    delay={0.3}
+                    tier="Business Protect"
+                    price="2499.00"
+                    color="red"
+                    features={[
+                      "Breach Alert",
+                      "Employee Training",
+                      "User Mgmt",
+                    ]}
+                  />
+                </div>
+              )}
             </div>
           )}
         </AnimatePresence>
@@ -275,9 +312,9 @@ function PricingCard({
   const accentBorder = color === "red" ? "border-red-600" : "border-blue-600";
   return (
     <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay, type: "spring", stiffness: 80 }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.6, ease: "easeOut" }}
       className={`p-8 rounded-[2rem] border-2 flex flex-col h-full transition-colors duration-500 ${isDark ? "bg-[#0a0a0a]" : "bg-white"} ${accentBorder} ${featured ? "shadow-[0_10px_40px_rgba(37,99,235,0.1)]" : "border-opacity-30"}`}
     >
       <h3

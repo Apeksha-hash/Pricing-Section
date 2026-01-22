@@ -1,8 +1,25 @@
-import React from "react";
-// Removed ShieldAlert and Activity since they aren't used below
-import { Lock } from "lucide-react";
+import React, { useState } from "react";
+import { Lock, Mail } from "lucide-react";
+import cyberLogo from "../assets/cyber.jpeg";
+import "../signin-animations.css";
 
-const SecurityPortal: React.FC = () => {
+interface SecurityPortalProps {
+  onLoginSuccess: () => void;
+}
+
+const SecurityPortal: React.FC<SecurityPortalProps> = ({ onLoginSuccess }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim() && password.trim()) {
+      setSuccess(true);
+      setTimeout(() => onLoginSuccess(), 2000);
+    }
+  };
+
   return (
     <div className="h-screen w-full grid grid-cols-12 bg-[#020617] text-emerald-500 font-mono">
       {/* Phishing Alerts */}
@@ -21,20 +38,78 @@ const SecurityPortal: React.FC = () => {
       {/* The Login/Scan Area: centered */}
       <div className="col-span-6 flex items-center justify-center p-8 relative">
         <div className="w-full max-w-md bg-slate-950/40 border border-emerald-500/20 p-10 rounded-3xl backdrop-blur-2xl shadow-[0_0_50px_rgba(16,185,129,0.1)] text-center">
-          <div className="inline-flex p-4 rounded-2xl bg-emerald-500/10 mb-6">
-            <Lock className="text-emerald-500" size={32} />
+          {/* Interactive Cyber Logo */}
+          <div className="flex justify-center mb-6">
+            <img
+              src={cyberLogo}
+              alt="Cyber Logo"
+              className="animate-jump"
+              style={{
+                width: "80px",
+                height: "80px",
+                borderRadius: "16px",
+                background:
+                  "linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05))",
+                padding: "8px",
+              }}
+            />
           </div>
-          <h2 className="text-2xl font-bold text-white mb-6">
-            Identity Verification
-          </h2>
-          <input
-            type="text"
-            placeholder="SECURE_ACCESS_ID"
-            className="w-full bg-black/40 border border-slate-800 p-4 rounded-xl mb-4 focus:border-emerald-500 outline-none text-emerald-500"
-          />
-          <button className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-black font-black rounded-xl transition-all">
-            UNLOCK PRICING
-          </button>
+
+          {success ? (
+            <div className="space-y-4 animate-tada">
+              <div className="inline-flex p-4 rounded-2xl bg-emerald-500/10 mb-2">
+                <span className="text-4xl">✔</span>
+              </div>
+              <h2 className="text-2xl font-bold text-emerald-400 mb-2">
+                UNLOCKED
+              </h2>
+              <p className="text-sm text-emerald-300">Access granted! 🎉</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <h2 className="text-2xl font-bold text-white mb-6">
+                Identity Verification
+              </h2>
+
+              {/* Email Field */}
+              <div className="relative">
+                <Mail
+                  className="absolute left-4 top-4 text-emerald-500"
+                  size={18}
+                />
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-black/40 border border-slate-800 p-4 pl-12 rounded-xl focus:border-emerald-500 outline-none text-emerald-500 placeholder-slate-600"
+                />
+              </div>
+
+              {/* Password Field */}
+              <div className="relative">
+                <Lock
+                  className="absolute left-4 top-4 text-emerald-500"
+                  size={18}
+                />
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-black/40 border border-slate-800 p-4 pl-12 rounded-xl focus:border-emerald-500 outline-none text-emerald-500 placeholder-slate-600"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={success}
+                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-black font-black rounded-xl transition-all animate-pulse"
+              >
+                UNLOCK PRICING
+              </button>
+            </form>
+          )}
         </div>
       </div>
 
