@@ -178,11 +178,10 @@ const App: React.FC = () => {
                   className="w-24 h-24 bg-white rounded-2xl flex items-center justify-center shadow-2xl border-4 border-blue-600 overflow-hidden"
                 >
                   <img
-                    src="cyber.jpeg"
+                    src="/cyber.jpeg"
                     alt="Cyber Logo"
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      // Fallback if image doesn't load
                       e.currentTarget.src =
                         "https://via.placeholder.com/150?text=CYBER";
                     }}
